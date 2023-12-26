@@ -3,6 +3,12 @@ var mainContent = document.getElementById("main-content");
 var data;
 var countryHTML;
 const countriesMapped = new Map();
+selectList.addEventListener("change",(e) => {
+    alert("changed");
+    var selectedCountry = e.target.value;
+    //selectList[selectList.selectedIndex].innerText;
+    printPage(selectedCountry);
+})
 async function getData() {
     const data = async function() {
         const res = await fetch("https://restcountries.com/v3.1/all")
@@ -246,9 +252,6 @@ async function printPage(selectedCountry) {
     countryNews(selectedCountry);
     mainContent.innerHTML+=countryHTML;
 }
-selectList.addEventListener("change",(e) => {
-    var selectedCountry = selectList[selectList.selectedIndex].innerText;
-    printPage(selectedCountry);
-})
+
 
 

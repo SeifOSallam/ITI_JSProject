@@ -1,21 +1,25 @@
 var selectList = document.getElementById("selectList");
 var mainContent = document.getElementById("main-content");
+var cdetails;
+var cfacts;
+var clocation;
+var cnews;
 var data;
-var countryHTML;
+var added = 0;
 const countriesMapped = new Map();
-selectList.addEventListener("change",(e) => {
-    alert("changed");
+selectList.onchange = function(e) {
+    console.log("changed");
     var selectedCountry = e.target.value;
-    //selectList[selectList.selectedIndex].innerText;
     printPage(selectedCountry);
-})
+}
+
+
 async function getData() {
     const data = async function() {
         const res = await fetch("https://restcountries.com/v3.1/all")
         return res.json();
     }
     var jsonData = await data();
-    console.log(jsonData);
     return jsonData;
 }
 function addNames(countriesData) {
@@ -36,7 +40,7 @@ async function initList() {
     addNames(data);
 }
 
-initList();
+
 function countryDetails(selectedCountry) {
     var selectedCountryData = countriesMapped.get(selectedCountry);
     var unMemOutput;
@@ -53,8 +57,8 @@ function countryDetails(selectedCountry) {
     else {
         independentOutput=`<i class="fas fa-times"></i> `
     }
-    countryHTML+=`
-        <section class="wf100 p80 h2-local-brands depart-info">
+    cdetails=`
+        <section class="wf100 p80 h2-local-brands depart-info" id="cdetails">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
@@ -112,8 +116,8 @@ function countryDetails(selectedCountry) {
 function countryFacts(selectedCountry) {
     var selectedCountryData = countriesMapped.get(selectedCountry);
     
-    countryHTML+=`
-        <section class="wf100 some-facts">
+    cfacts=`
+        <section class="wf100 some-facts" id="cfacts">
             <div class="container">
             <h2>Read Some Facts</h2>
             <ul>
@@ -145,8 +149,8 @@ function countryFacts(selectedCountry) {
 function countryLocation(selectedCountry) {
     var selectedCountryData = countriesMapped.get(selectedCountry);
     
-    countryHTML+=`
-        <div class="map-form p80">
+    clocation=`
+        <div class="map-form p80" id="clocation">
             <div class="container">
                 <div class="row">
                     <div class="col-md-4 col-sm-5">
@@ -171,8 +175,8 @@ function countryLocation(selectedCountry) {
 function countryNews(selectedCountry) {
     var selectedCountryData = countriesMapped.get(selectedCountry);
     
-    countryHTML+=`
-        <section class="wf100 city-news p75">
+    cnews=`
+        <section class="wf100 city-news p75" id="cnews">
     <div class="container">
         <div class="title-style-3">
         <h3>Be Updated with City News</h3>
@@ -245,13 +249,46 @@ function countryNews(selectedCountry) {
     `
 }
 async function printPage(selectedCountry) {
-    countryHTML = ``;
     countryDetails(selectedCountry);
     countryFacts(selectedCountry);
     countryLocation(selectedCountry);
     countryNews(selectedCountry);
-    mainContent.innerHTML+=countryHTML;
+    if (added == 0) {
+        mainContent.innerHTML += cdetails;
+        mainContent.innerHTML += cfacts;
+        mainContent.innerHTML += clocation;
+        mainContent.innerHTML += cnews;
+        added=1;
+        selectList = document.getElementById("selectList");
+        selectList.onchange = function(e) {
+            console.log("changed");
+            var selectedCountry = e.target.value;
+            printPage(selectedCountry);
+        }
+    }
+    else {
+        
+        document.getElementById("cdetails").innerHTML = cdetails;
+        document.getElementById("cfacts").innerHTML = cfacts;
+        document.getElementById("clocation").innerHTML = clocation;
+        document.getElementById("cnews").innerHTML = cnews;
+    }
 }
 
+initList();
 
 
+
+(function(){
+    emailjs.init("vSJH6trKdrK_AD4gP");
+ })();
+document.getElementById("myForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    // these IDs from the previous steps
+    emailjs.sendForm('service_zwvc5yo', 'contact_form', this)
+        .then(function() {
+            document.getElementById("myForm").reset();
+        }, function(error) {
+            console.log('FAILED...', error);
+        });
+});

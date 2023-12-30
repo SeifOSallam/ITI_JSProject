@@ -7,8 +7,11 @@ var cnews;
 var data;
 var added = 0;
 const countriesMapped = new Map();
+
+const newsApiKey = '9c6b35c932714e6dae32f20e13be6650';
+
+
 selectList.onchange = function(e) {
-    console.log("changed");
     var selectedCountry = e.target.value;
     printPage(selectedCountry);
 }
@@ -21,6 +24,14 @@ async function getData() {
     }
     var jsonData = await data();
     return jsonData;
+}
+async function getNews(countryCode) {
+    const news = async function() {
+        const res = await fetch(`https://api.worldnewsapi.com/search-news?api-key=${newsApiKey}&source-countries=${countryCode}`);
+        return res.json();
+    }
+    var jsonNews = await news();
+    return jsonNews;
 }
 function addNames(countriesData) {
     var namesArray = [];
@@ -57,8 +68,7 @@ function countryDetails(selectedCountry) {
     else {
         independentOutput=`<i class="fas fa-times"></i> `
     }
-    cdetails=`
-        <section class="wf100 p80 h2-local-brands depart-info" id="cdetails">
+    cdetails=`<section class="wf100 p80 h2-local-brands depart-info" id="cdetails">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
@@ -116,8 +126,7 @@ function countryDetails(selectedCountry) {
 function countryFacts(selectedCountry) {
     var selectedCountryData = countriesMapped.get(selectedCountry);
     
-    cfacts=`
-        <section class="wf100 some-facts" id="cfacts">
+    cfacts=`<section class="wf100 some-facts" id="cfacts">
             <div class="container">
             <h2>Read Some Facts</h2>
             <ul>
@@ -149,8 +158,7 @@ function countryFacts(selectedCountry) {
 function countryLocation(selectedCountry) {
     var selectedCountryData = countriesMapped.get(selectedCountry);
     
-    clocation=`
-        <div class="map-form p80" id="clocation">
+    clocation=`<div class="map-form p80" id="clocation">
             <div class="container">
                 <div class="row">
                     <div class="col-md-4 col-sm-5">
@@ -172,11 +180,12 @@ function countryLocation(selectedCountry) {
         </div>
     `
 }
-function countryNews(selectedCountry) {
+async function countryNews(selectedCountry) {
     var selectedCountryData = countriesMapped.get(selectedCountry);
-    
-    cnews=`
-        <section class="wf100 city-news p75" id="cnews">
+    let countryCode = selectedCountryData.cca2;
+    let newsjson = await getNews(countryCode);
+    console.log(newsjson);
+    cnews=`<section class="wf100 city-news p75" id="cnews">
     <div class="container">
         <div class="title-style-3">
         <h3>Be Updated with City News</h3>
@@ -186,13 +195,13 @@ function countryNews(selectedCountry) {
         <!--News Box Start-->
         <div class="col-md-3 col-sm-6">
             <div class="news-box">
-            <div class="new-thumb"> <span class="cat c1">Economy</span> <img src="images/h3citynews-1.jpg" alt=""> </div>
+            <div class="new-thumb"> <span class="cat c1">Economy</span> <img src=${newsjson.news[0].image} alt=""> </div>
             <div class="new-txt">
                 <ul class="news-meta">
-                <li>20 MAR, 2019</li>
+                <li>${(newsjson.news[0].publish_date).split(" ")[0]}</li>
                 </ul>
-                <h6><a href="index.html#">Media talking about foriegn affairs</a></h6>
-                <p> How all this mistaken idea of denounce pleasure and praising pain was born I will give you an. </p>
+                <h6><a href=${newsjson.news[0].url}>${newsjson.news[0].title}</a></h6>
+                <p>${newsjson.news[0].text.length>=50?newsjson.news[0].text.substring(0,50)+"...":newsjson.news[0].text}</p>
             </div>
             <div class="news-box-f"> <img src="https://www.pngitem.com/pimgs/m/150-1503945_transparent-user-png-default-user-image-png-png.png" alt=""> Johny Stewart <a href="index.html#"><i class="fas fa-arrow-right"></i></a> </div>
             </div>
@@ -201,13 +210,13 @@ function countryNews(selectedCountry) {
         <!--News Box Start-->
         <div class="col-md-3  col-sm-6">
             <div class="news-box">
-            <div class="new-thumb"> <span class="cat c2">Business</span> <img src="images/h3citynews-2.jpg" alt=""> </div>
+            <div class="new-thumb"> <span class="cat c2">Business</span> <img src=${newsjson.news[1].image} alt=""> </div>
             <div class="new-txt">
                 <ul class="news-meta">
-                <li>21 MAR, 2019</li>
+                <li>${(newsjson.news[1].publish_date).split(" ")[0]}</li>
                 </ul>
-                <h6><a href="index.html#">Integer mollis urna et egestas pretium</a></h6>
-                <p> How all this mistaken idea of denounce pleasure and praising pain was born I will give you an. </p>
+                <h6><a href=${newsjson.news[1].url}>${newsjson.news[1].title}</a></h6>
+                <p> ${newsjson.news[1].text.length>=50?newsjson.news[1].text.substring(0,50)+"...":newsjson.news[1].text} </p>
             </div>
             <div class="news-box-f"> <img src="https://www.pngitem.com/pimgs/m/150-1503945_transparent-user-png-default-user-image-png-png.png" alt=""> Mathew Dan <a href="index.html#"><i class="fas fa-arrow-right"></i></a> </div>
             </div>
@@ -216,13 +225,13 @@ function countryNews(selectedCountry) {
         <!--News Box Start-->
         <div class="col-md-3  col-sm-6">
             <div class="news-box">
-            <div class="new-thumb"> <span class="cat c3">Policies</span> <img src="images/h3citynews-3.jpg" alt=""> </div>
+            <div class="new-thumb"> <span class="cat c3">Policies</span> <img src=${newsjson.news[2].image} alt=""> </div>
             <div class="new-txt">
                 <ul class="news-meta">
-                <li>05 MAY, 2019</li>
+                <li>${(newsjson.news[2].publish_date).split(" ")[0]}</li>
                 </ul>
-                <h6><a href="index.html#">In ut erat in  dictum a et purus</a></h6>
-                <p> How all this mistaken idea of denounce pleasure and praising pain was born I will give you an. </p>
+                <h6><a href=${newsjson.news[2].url}>${newsjson.news[2].title}</a></h6>
+                <p> ${newsjson.news[2].text.length>=50?newsjson.news[2].text.substring(0,50)+"...":newsjson.news[2].text} </p>
             </div>
             <div class="news-box-f"> <img src="https://www.pngitem.com/pimgs/m/150-1503945_transparent-user-png-default-user-image-png-png.png" alt=""> Smith Jones <a href="index.html#"><i class="fas fa-arrow-right"></i></a> </div>
             </div>
@@ -231,13 +240,13 @@ function countryNews(selectedCountry) {
         <!--News Box Start-->
         <div class="col-md-3  col-sm-6">
             <div class="news-box">
-            <div class="new-thumb"> <span class="cat c4">Education</span> <img src="images/h3citynews-4.jpg" alt=""> </div>
+            <div class="new-thumb"> <span class="cat c4">Education</span> <img src=${newsjson.news[3].image} alt=""> </div>
             <div class="new-txt">
                 <ul class="news-meta">
-                <li>15 OCT, 2019</li>
+                <li>${(newsjson.news[3].publish_date).split(" ")[0]}</li>
                 </ul>
-                <h6><a href="index.html#">Cras accumsan mauris eget massa</a></h6>
-                <p> How all this mistaken idea of denounce pleasure and praising pain was born I will give you an. </p>
+                <h6><a href=${newsjson.news[3].url}>${newsjson.news[3].title}</a></h6>
+                <p> ${newsjson.news[3].text.length>=50?newsjson.news[3].text.substring(0,50)+"...":newsjson.news[3].text} </p>
             </div>
             <div class="news-box-f"> <img src="https://www.pngitem.com/pimgs/m/150-1503945_transparent-user-png-default-user-image-png-png.png" alt=""> Nathan Taylor <a href="index.html#"><i class="fas fa-arrow-right"></i></a> </div>
             </div>
@@ -252,7 +261,7 @@ async function printPage(selectedCountry) {
     countryDetails(selectedCountry);
     countryFacts(selectedCountry);
     countryLocation(selectedCountry);
-    countryNews(selectedCountry);
+    const thenews = await countryNews(selectedCountry);
     if (added == 0) {
         mainContent.innerHTML += cdetails;
         mainContent.innerHTML += cfacts;

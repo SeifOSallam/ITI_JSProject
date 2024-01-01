@@ -157,7 +157,8 @@ function countryFacts(selectedCountry) {
 }
 function countryLocation(selectedCountry) {
     var selectedCountryData = countriesMapped.get(selectedCountry);
-    
+    const apiKey = "AIzaSyDCCfoXSZoK3UBns2vOgqjxikkomxkSp6k";
+    const url = `https://www.google.com/maps/embed/v1/search?key=${apiKey}&zoom=6&q=${selectedCountry}`;
     clocation=`<div class="map-form p80" id="clocation">
             <div class="container">
                 <div class="row">
@@ -172,7 +173,7 @@ function countryLocation(selectedCountry) {
                     </div>
                     <div class="col-md-8 col-sm-7">
                         <div class="map">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7292340.776536581!2d25.58376013091712!3d26.81725701347487!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14368976c35c36e9%3A0x2c45a00925c4c444!2sEgypt!5e0!3m2!1sen!2seg!4v1703545573653!5m2!1sen!2seg"></iframe>
+                            <iframe src=${url}></iframe>
                         </div>
                     </div>
                 </div>
